@@ -8,6 +8,9 @@ const db = require("../db");
 //Routes
 // - Login
 router.get("/login", function (req, res, next) {
+    if(req.user) {
+        return res.redirect("/");
+    }
     res.render("login");
 });
 
@@ -26,6 +29,9 @@ router.post("/logout", function (req, res, next) {
 
 // - Signup
 router.get("/signup", function (req, res, next) {
+    if(req.user) {
+        return res.redirect("/");
+    }
     res.render("signup");
 });
 

@@ -35,6 +35,12 @@ passport.deserializeUser(function(user, done) {
     })
 });
 
+//Save logged in user
+app.use(function(req, res, next) {
+    res.locals.user = req.user;
+    next();
+});
+
 //Middleware to parse form data
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
