@@ -15,6 +15,13 @@ router.post("/login/password", passport.authenticate("local", {
     failureRedirect: "/login"
 }))
 
+router.post("/logout", function(req, res, next) {
+    req.logout(function(err) {
+        if (err) { return next(err); }
+        res.redirect("/");
+    })
+})
+
 //Auth Strategy
 passport.use(new LocalStrategy(function verify(username, password, done) {
     db.get("SELECT * FROM users WHERE username = ?", [username], function(err, row) {
