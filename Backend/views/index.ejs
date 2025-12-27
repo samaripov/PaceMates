@@ -37,6 +37,9 @@
         <span style="<%= todo.completed ? 'text-decoration: line-through; color: grey;' : '' %>">
           <%= todo.title %>
         </span>
+        <form action="/todo/<%= todo.id %>/delete" method="post">
+          <button type="submit">Delete</button>
+        </form>
       </div>
       <% }); %>
     </div>

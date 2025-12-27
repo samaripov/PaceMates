@@ -21,7 +21,7 @@ function fetchTodos(req, res, next) {
   });
 }
 
-function createTodo(req, res, next) {
+function createTodo(req, _, next) {
   db.run("INSERT INTO todos (owner_id, title, completed) VALUES (?, ?, ?)", [
     req.user.id,
     req.body.title,
@@ -29,14 +29,14 @@ function createTodo(req, res, next) {
   ]);
   next();
 }
-function toggleComplete(req, res, next) {
+function toggleComplete(req, _, next) {
   console.log(req.body.todo_id)
   const complete = req.body.completeness_marker === "on" ? 1 : 0;
   db.run("UPDATE todos SET completed = ? WHERE id = ?", [complete, req.body.todo_id])
   next();
 }
 
-function deleteTodo(req, res, next) {
+function deleteTodo(req, _, next) {
   const todoId = req.params.id;
   db.run("DELETE FROM todos WHERE id = ?", [todoId]);
   next();

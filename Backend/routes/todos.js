@@ -31,7 +31,7 @@ router.post("/toggle_complete",
     goHome
 );
 
-router.delete("/todo/:id", 
+router.post("/:id/delete", 
     isAuthenticated,
     todosController.deleteTodo,
     todosController.fetchTodos,
