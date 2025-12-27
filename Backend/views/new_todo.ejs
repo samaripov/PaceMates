@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>New Todo</title>
+</head>
+
+<body>
+  <section class="prompt">
+    <h3>New Todo</h3>
+    <form action="/todo/create" method="post">
+      <section>
+        <label for="title">Title</label>
+        <input id="title" name="title" type="text" autocomplete="title" required autofocus>
+      </section>
+      <button type="submit">Create Todo</button>
+    </form>
+  </section>
+</body>
+
+</html>

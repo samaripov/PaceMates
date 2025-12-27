@@ -8,7 +8,7 @@ const db = require("../db");
 //Routes
 // - Login
 router.get("/login", function (req, res, next) {
-    if(req.user) {
+    if (req.user) {
         return res.redirect("/");
     }
     res.render("login");
@@ -29,7 +29,7 @@ router.post("/logout", function (req, res, next) {
 
 // - Signup
 router.get("/signup", function (req, res, next) {
-    if(req.user) {
+    if (req.user) {
         return res.redirect("/");
     }
     res.render("signup");
@@ -43,24 +43,24 @@ router.post("/signup", function (req, res, next) {
     crypto.pbkdf2(req.body.password, salt, 310000, 32, "sha256", function (err, hashedPassword) {
         if (err) { return next(err); }
         db.run(
-            "INSERT INTO users (username, hashed_password, salt) VALUES (?, ?, ?)", 
+            "INSERT INTO users (username, hashed_password, salt) VALUES (?, ?, ?)",
             [
                 req.body.username,
                 hashedPassword,
                 salt
             ],
-            function(err) {
+            function (err) {
                 if (err) { return next(err); }
                 const user = {
                     id: this.lastID,
                     username: req.body.username
                 };
-                req.login(user, function(err) {
+                req.login(user, function (err) {
                     if (err) { return next(err); }
                     res.redirect("/")
-                })
+                });
             }
-        )
+        );
     });
 })
 //Auth Strategy

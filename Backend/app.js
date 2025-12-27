@@ -8,9 +8,6 @@ const SQLiteStore = require("connect-sqlite3")(session);
 const app = express();
 const PORT = 5000;
 
-//Routers
-const indexRouter = require('./routes/index');
-const authRouter = require("./routes/auth");
 
 //Session Support
 app.use(express.static(path.join(__dirname, "public")));
@@ -49,8 +46,14 @@ app.use(express.json());
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+//Routers
+const indexRouter = require('./routes/index');
+const authRouter = require("./routes/auth");
+const todosRouter = require('./routes/todos');
+
 app.use('/', indexRouter);
 app.use('/', authRouter);
+app.use('/todo', todosRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
