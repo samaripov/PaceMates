@@ -5,8 +5,6 @@ socket.on("connect", () => {
 });
 
 socket.on("todo_update", (todo) => {
-    console.log("New todo received: ", todo);
-
     const todoContainer = document.getElementById("todo_container");
     const todoHTML = `
         <div id="${todo.id}" class="todo_item" style="display: flex;">
@@ -24,6 +22,16 @@ socket.on("todo_update", (todo) => {
     todoContainer.insertAdjacentHTML("beforeend", todoHTML);
 });
 
-socket.on("todo_delete", (todoId) => {
-    document.getElementById(todoId)?.remove();
+socket.on("todo_toggle_completed", (todo) => {
+  const todoToUpdate = document.getElementById(todo.id);
+  const checkbox = todoToUpdate.querySelector(`input[type="checkbox"]`);
+  const span = todoToUpdate.querySelector('span');
+
+  checkbox.checked = todo.completeness_marker;
+  span.style.textDecoration = todo.completeness_marker ? 'line-through' : 'none';
+  span.style.color = todo.completeness_marker ? 'grey' : 'black';
+});
+
+socket.on("todo_delete", (todo) => {
+    document.getElementById(todo.id)?.remove();
 });

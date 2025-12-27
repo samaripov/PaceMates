@@ -39,13 +39,19 @@ function createTodo(req, _, next) {
     }
 
     const io = getIO();
-    io.emit("todo_update", newTodo);
+    io.to(`user_${req.user.id}`).emit("todo_update", newTodo);
   });
   next();
 }
 function toggleComplete(req, _, next) {
   const complete = req.body.completeness_marker === "on" ? 1 : 0;
-  db.run("UPDATE todos SET completed = ? WHERE id = ?", [complete, req.body.todo_id])
+  db.run("UPDATE todos SET completed = ? WHERE id = ?", [complete, req.body.todo_id]);
+
+  const io = getIO();
+  io.to(`user_${req.user.id}`).emit("todo_toggle_completed", {
+    id: req.body.todo_id, 
+    completeness_marker: req.body.completeness_marker 
+  });
   next();
 }
 
@@ -54,7 +60,7 @@ function deleteTodo(req, _, next) {
   db.run("DELETE FROM todos WHERE id = ?", [todoId]);
 
   const io = getIO();
-  io.emit("todo_delete", todoId);
+  io.to(`user_${req.user.id}`).emit("todo_delete", { id: todoId });
   next();
 }
 

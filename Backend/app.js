@@ -9,13 +9,15 @@ const app = express();
 const PORT = 5000;
 
 //Session Support
-app.use(express.static(path.join(__dirname, "public")));
-app.use(session({
+const sessionMiddleware = session({
     secret: "keyboard cat",
     resave: false,
     saveUninitialized: false,
     store: new SQLiteStore({ db: "sessions.db", dir: "./var/db" })
-}));
+});
+
+app.use(express.static(path.join(__dirname, "public")));
+app.use(sessionMiddleware);
 app.use(passport.authenticate("session"));
 
 //Persist user information
@@ -66,13 +68,15 @@ app.use(function (err, req, res, next) {
 });
 
 const http = require("http");
-const { initializeIO } = require("./socketIO");
 const server = http.createServer(app);
 
-initializeIO(server);
+const { initializeIO } = require("./socketIO");
+initializeIO(server, sessionMiddleware);
 
 server.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+module.exports = { server, sessionMiddleware };
 
 module.exports = server;

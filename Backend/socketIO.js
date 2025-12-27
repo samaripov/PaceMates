@@ -2,21 +2,26 @@ const socketIo = require("socket.io");
 
 let io = null;
 
-function initializeIO(server) {
+function initializeIO(server, sessionMiddleware) {
     if (!io) {
         io = socketIo(server);
+
+        // Share session with Socket.IO
+        io.engine.use(sessionMiddleware);
 
         io.on("connection", (socket) => {
             console.log(`A user connected: ${socket.id}`);
 
-            socket.on("todo_update", (todo) => {
-                console.log(`${todo} updated`);
-                io.emit("todo_update", todo);
-            });
+            // Get userId from socket's session
+            const session = socket.request.session;
+            const userId = session?.passport?.user?.id;
 
-            socket.on("todo_delete", (todoId) => {
-                io.emit("todo_delete", todoId);
-            })
+            if (userId) {
+                socket.join(`user_${userId}`);
+                console.log(`User ${userId} joined their room`);
+            } else {
+                console.log("Socket connected without authenticated user");
+            }
 
             socket.on("disconnect", () => {
                 console.log(`User disconnected: ${socket.id}`);
@@ -27,7 +32,7 @@ function initializeIO(server) {
 }
 
 function getIO() {
-    if(!io) {
+    if (!io) {
         throw new Error("Socket.io is not initialized;");
     }
     return io;
