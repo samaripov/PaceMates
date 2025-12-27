@@ -1,4 +1,4 @@
-  <div class="todo_item" style="display: flex;">
+  <div id="<%= todo.id %>" class="todo_item" style="display: flex;">
     <form action="/todo/toggle_complete" method="post">
       <input type="hidden" name="todo_id" value="<%= todo.id %>" />
       <input type="checkbox" name="completeness_marker" <%= todo.completed ? 'checked' : '' %> onchange="this.form.submit()" />

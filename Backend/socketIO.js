@@ -14,6 +14,10 @@ function initializeIO(server) {
                 io.emit("todo_update", todo);
             });
 
+            socket.on("todo_delete", (todoId) => {
+                io.emit("todo_delete", todoId);
+            })
+
             socket.on("disconnect", () => {
                 console.log(`User disconnected: ${socket.id}`);
             });

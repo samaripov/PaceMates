@@ -33,7 +33,7 @@ function createTodo(req, _, next) {
     }
     const newTodo = {
       id: this.lastID,
-      owner_id: req.body.id,
+      owner_id: req.user.id,
       title: req.body.title,
       complete: false
     }
@@ -52,6 +52,9 @@ function toggleComplete(req, _, next) {
 function deleteTodo(req, _, next) {
   const todoId = req.params.id;
   db.run("DELETE FROM todos WHERE id = ?", [todoId]);
+
+  const io = getIO();
+  io.emit("todo_delete", todoId);
   next();
 }
 
