@@ -3,29 +3,38 @@ const todosController = require("../controllers/todosController");
 
 const router = express.Router();
 
-router.get("/new", function (req, res, next) {
+function isAuthenticated(req, res, next) {
+    if (!req.user) {
+        return res.redirect("/");
+    }
+    next();
+}
+function goHome(_, res) {
+    res.redirect("/");
+}
+
+router.get("/new", function (_, res, next) {
     res.render("new_todo");
 })
 
-router.post("/create", function (req, res, next) {
-    if (!req.user) {
-        return res.redirect("/");
-    }
-    next()
-}, todosController.createTodo,
+router.post("/create",
+    isAuthenticated,
+    todosController.createTodo,
     todosController.fetchTodos,
-    function (req, res) {
-        res.redirect("/");
-    });
-    
-router.post("/toggle_complete", function (req, res, next) {
-    if (!req.user) {
-        return res.redirect("/");
-    }
-    next()
-}, todosController.toggleComplete,
+    goHome
+);
+
+router.post("/toggle_complete",
+    isAuthenticated, 
+    todosController.toggleComplete,
     todosController.fetchTodos,
-    function (req, res) {
-        res.redirect("/");
-    });
+    goHome
+);
+
+router.delete("/todo/:id", 
+    isAuthenticated,
+    todosController.deleteTodo,
+    todosController.fetchTodos,
+    goHome
+);
 module.exports = router;

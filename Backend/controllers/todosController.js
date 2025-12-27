@@ -36,8 +36,15 @@ function toggleComplete(req, res, next) {
   next();
 }
 
+function deleteTodo(req, res, next) {
+  const todoId = req.params.id;
+  db.run("DELETE FROM todos WHERE id = ?", [todoId]);
+  next();
+}
+
 module.exports = {
   fetchTodos,
   createTodo,
-  toggleComplete
+  toggleComplete,
+  deleteTodo
 }
