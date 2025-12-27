@@ -8,32 +8,31 @@ const SQLiteStore = require("connect-sqlite3")(session);
 const app = express();
 const PORT = 5000;
 
-
 //Session Support
 app.use(express.static(path.join(__dirname, "public")));
 app.use(session({
     secret: "keyboard cat",
     resave: false,
     saveUninitialized: false,
-    store: new SQLiteStore({db: "sessions.db", dir: "./var/db" })
+    store: new SQLiteStore({ db: "sessions.db", dir: "./var/db" })
 }));
 app.use(passport.authenticate("session"));
 
 //Persist user information
-passport.serializeUser(function(user, done) {
-    process.nextTick(function() {
+passport.serializeUser(function (user, done) {
+    process.nextTick(function () {
         done(null, { id: user.id, username: user.username });
     });
 });
 
-passport.deserializeUser(function(user, done) {
-    process.nextTick(function() {
+passport.deserializeUser(function (user, done) {
+    process.nextTick(function () {
         return done(null, user);
     })
 });
 
 //Save logged in user
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.locals.user = req.user;
     next();
 });
@@ -56,17 +55,24 @@ app.use('/', authRouter);
 app.use('/todo', todosRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+app.use(function (req, res, next) {
+    next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.send(`<h1>Error ${err.status || 500}</h1><p>${err.message}</p>`);
+app.use(function (err, req, res, next) {
+    res.status(err.status || 500);
+    res.send(`<h1>Error ${err.status || 500}</h1><p>${err.message}</p>`);
 });
 
+const http = require("http");
+const { initializeIO } = require("./socketIO");
+const server = http.createServer(app);
 
-app.listen(PORT, () => {
+initializeIO(server);
+
+server.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+module.exports = server;

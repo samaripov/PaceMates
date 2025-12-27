@@ -1,4 +1,5 @@
 const db = require("../db");
+const { getIO } = require("../socketIO");
 
 function fetchTodos(req, res, next) {
   db.all("SELECT * FROM todos WHERE owner_id = ?", [
@@ -26,11 +27,23 @@ function createTodo(req, _, next) {
     req.user.id,
     req.body.title,
     0
-  ]);
+  ], function (err) {
+    if (err) {
+      return next(err);
+    }
+    const newTodo = {
+      id: this.lastID,
+      owner_id: req.body.id,
+      title: req.body.title,
+      complete: false
+    }
+
+    const io = getIO();
+    io.emit("todo_update", newTodo);
+  });
   next();
 }
 function toggleComplete(req, _, next) {
-  console.log(req.body.todo_id)
   const complete = req.body.completeness_marker === "on" ? 1 : 0;
   db.run("UPDATE todos SET completed = ? WHERE id = ?", [complete, req.body.todo_id])
   next();
