@@ -34,7 +34,7 @@
           <input type="hidden" name="todo_id" value="<%= todo.id %>" />
           <input type="checkbox" name="completeness_marker" <%= todo.completed ? 'checked' : '' %> onchange="this.form.submit()" />
         </form>
-        <span style=<%= todo.completed ? 'text-decoration: line-through;' : '' %>>
+        <span style="<%= todo.completed ? 'text-decoration: line-through; color: grey;' : '' %>">
           <%= todo.title %>
         </span>
       </div>
