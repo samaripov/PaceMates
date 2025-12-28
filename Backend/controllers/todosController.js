@@ -22,7 +22,7 @@ function fetchTodos(req, res, next) {
   });
 }
 
-function createTodo(req, _, next) {
+function createTodo(req, res, next) {
   db.run("INSERT INTO todos (owner_id, title, completed) VALUES (?, ?, ?)", [
     req.user.id,
     req.body.title,
@@ -37,20 +37,26 @@ function createTodo(req, _, next) {
       title: req.body.title,
       complete: false
     }
-
-    const io = getIO();
-    io.to(`user_${req.user.id}`).emit("todo_update", newTodo);
+    res.locals.newTodo = newTodo;
+    next();
   });
+}
+function notifyTodoListUpdate(req, res, next) {
+  const io = getIO();
+  io.to(`user_${req.user.id}`).emit("todo_update", res.locals.newTodo);
   next();
 }
+
 function toggleComplete(req, _, next) {
   const complete = req.body.completeness_marker === "on" ? 1 : 0;
   db.run("UPDATE todos SET completed = ? WHERE id = ?", [complete, req.body.todo_id]);
-
+  next();
+}
+function notifyTodoToggled(req, _, next) {
   const io = getIO();
   io.to(`user_${req.user.id}`).emit("todo_toggle_completed", {
-    id: req.body.todo_id, 
-    completeness_marker: req.body.completeness_marker 
+    id: req.body.todo_id,
+    completeness_marker: req.body.completeness_marker
   });
   next();
 }
@@ -67,6 +73,8 @@ function deleteTodo(req, _, next) {
 module.exports = {
   fetchTodos,
   createTodo,
+  notifyTodoToggled,
   toggleComplete,
+  notifyTodoListUpdate,
   deleteTodo
 }

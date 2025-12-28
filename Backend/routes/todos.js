@@ -20,6 +20,7 @@ router.get("/new", function (_, res, next) {
 router.post("/create",
     isAuthenticated,
     todosController.createTodo,
+    todosController.notifyTodoListUpdate,
     todosController.fetchTodos,
     goHome
 );
@@ -27,6 +28,7 @@ router.post("/create",
 router.post("/toggle_complete",
     isAuthenticated, 
     todosController.toggleComplete,
+    todosController.notifyTodoToggled,
     todosController.fetchTodos,
     goHome
 );
