@@ -36,7 +36,9 @@ router.post("/toggle_complete",
 router.post("/:id/delete", 
     isAuthenticated,
     todosController.deleteTodo,
+    todosController.notifyTodoDeleted,
     todosController.fetchTodos,
     goHome
 );
+
 module.exports = router;

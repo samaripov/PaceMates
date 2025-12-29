@@ -44,6 +44,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // view engine setup
+const expressLayouts = require("express-ejs-layouts");
+app.use(expressLayouts);
+app.set("layout", "layout");
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 

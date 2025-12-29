@@ -64,8 +64,12 @@ function notifyTodoToggled(req, _, next) {
 function deleteTodo(req, _, next) {
   const todoId = req.params.id;
   db.run("DELETE FROM todos WHERE id = ?", [todoId]);
+  next();
+}
 
+function notifyTodoDeleted(req, _, next) {
   const io = getIO();
+  const todoId = req.params.id;
   io.to(`user_${req.user.id}`).emit("todo_delete", { id: todoId });
   next();
 }
@@ -76,5 +80,6 @@ module.exports = {
   notifyTodoToggled,
   toggleComplete,
   notifyTodoListUpdate,
-  deleteTodo
+  deleteTodo,
+  notifyTodoDeleted
 }
