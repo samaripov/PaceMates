@@ -11,7 +11,7 @@ router.get("/login", function (req, res, next) {
     if (req.user) {
         return res.redirect("/");
     }
-    res.render("login");
+    res.render("authentication/login");
 });
 
 router.post("/login/password", passport.authenticate("local", {
@@ -32,7 +32,7 @@ router.get("/signup", function (req, res, next) {
     if (req.user) {
         return res.redirect("/");
     }
-    res.render("signup");
+    res.render("/authentication/signup");
 });
 
 router.post("/signup", function (req, res, next) {
