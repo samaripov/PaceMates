@@ -77,9 +77,4 @@ const server = http.createServer(app);
 const { initializeIO } = require("./socketIO");
 initializeIO(server, sessionMiddleware);
 
-server.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
-
-
 module.exports = server;

@@ -20,9 +20,13 @@ npm test -- auth.test.js
 
 ## Test Coverage
 
+### GET /
+- ✓ Renders the landing page for unauthenticated users
+- ✓ Redirects authenticated users to index
+
 ### GET /login
 - ✓ Renders login page for unauthenticated users
-- ✓ Redirects authenticated users to home
+- ✓ Redirects authenticated users to landing page
 
 ### POST /login/password
 - ✓ Logs in with correct credentials
@@ -32,7 +36,7 @@ npm test -- auth.test.js
 
 ### GET /signup
 - ✓ Renders signup page for unauthenticated users
-- ✓ Redirects authenticated users to home
+- ✓ Redirects authenticated users to landing page
 
 ### POST /signup
 - ✓ Creates new user with valid data

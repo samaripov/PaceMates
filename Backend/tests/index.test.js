@@ -3,25 +3,22 @@ const server = require("../app");
 const db = require("../db");
 
 describe("Index Routes", () => {
+    // Test user credentials
     const testUser = {
-        username: "test",
-        password: "password"
-    }
+        username: "testuser_" + Date.now(),
+        password: "testpassword123",
+        confirm_password: "testpassword123"
+    };
     beforeAll(async () => {
         // Create test user
         await request(server)
             .post("/signup")
-            .send({
-                username: testUser.username,
-                password: testUser.password,
-                confirm_password: testUser.password
-            });
+            .send(testUser);
     });
-    
+
     afterAll((done) => {
-        //Clean up test environment
-        db.close();
-        server.close(done);
+        // Clean up test user
+        db.run("DELETE FROM users WHERE username = ?", [testUser.username], done);
     });
 
     describe("GET /", () => {
@@ -36,7 +33,10 @@ describe("Index Routes", () => {
             //Authenticate User
             const loginResponse = await request(server)
                 .post("/login/password")
-                .send(testUser)
+                .send({
+                    username: testUser.username,
+                    password: testUser.password
+                })
                 .expect(302);
 
             const sessionCookie = loginResponse.headers["set-cookie"];

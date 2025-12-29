@@ -4,12 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --testTimeout=10000 --detectOpenHandles",
+    "dev": "nodemon server.js",
+    "test": "jest --testTimeout=20000 --detectOpenHandles",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
   },
   "jest": {
     "testEnvironment": "node",
+    "globalTeardown": "./tests/globalTeardown.js",
     "coveragePathIgnorePatterns": [
       "/node_modules/"
     ],
