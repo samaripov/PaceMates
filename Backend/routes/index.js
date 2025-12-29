@@ -2,8 +2,8 @@ const express = require("express");
 const { fetchTodos } = require("../controllers/todosController");
 const router = express.Router();
 
-function redirectHomeIfNotAuthenticated(req, res, next) {
-  if (!req.user) { return res.render("home"); }
+function redirectToLandingIfNotAuthenticated(req, res, next) {
+  if (!req.user) { return res.render("landing"); }
   next();
 }
 
@@ -14,7 +14,7 @@ function renderIndexIfAuthenticated(req, res, next) {
 }
 
 router.get("/",
-  redirectHomeIfNotAuthenticated,
+  redirectToLandingIfNotAuthenticated,
   fetchTodos,
   renderIndexIfAuthenticated
 );
