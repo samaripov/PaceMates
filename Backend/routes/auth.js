@@ -32,7 +32,7 @@ router.get("/signup", function (req, res, next) {
     if (req.user) {
         return res.redirect("/");
     }
-    res.render("/authentication/signup");
+    res.render("authentication/signup");
 });
 
 router.post("/signup", function (req, res, next) {
