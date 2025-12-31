@@ -5,7 +5,7 @@ const router = express.Router();
 
 function isAuthenticated(req, res, next) {
     if (!req.user) {
-        return res.redirect("/");
+        return res.redirect("/login");
     }
     next();
 }
@@ -13,9 +13,11 @@ function goHome(_, res) {
     res.redirect("/");
 }
 
-router.get("/new", function (_, res, next) {
-    res.render("new_todo");
-})
+router.get("/new",
+    isAuthenticated,
+    function (_, res, next) {
+        res.render("new_todo");
+    });
 
 router.post("/create",
     isAuthenticated,
@@ -26,14 +28,14 @@ router.post("/create",
 );
 
 router.post("/toggle_complete",
-    isAuthenticated, 
+    isAuthenticated,
     todosController.toggleComplete,
     todosController.notifyTodoToggled,
     todosController.fetchTodos,
     goHome
 );
 
-router.post("/:id/delete", 
+router.post("/:id/delete",
     isAuthenticated,
     todosController.deleteTodo,
     todosController.notifyTodoDeleted,

@@ -24,6 +24,14 @@ npm test -- auth.test.js
 - ✓ Renders the landing page for unauthenticated users
 - ✓ Redirects authenticated users to index
 
+### GET /todo/new
+- ✓ Renders the login for unauthenticated users
+- ✓ Renders the new todo form for authenticated users
+
+### POST /todo/create
+- ✓ Persists new todo in the DB if the use is logged in
+- ✓ Does not persist the new todo in the DB when the user is not logged in
+
 ### GET /login
 - ✓ Renders login page for unauthenticated users
 - ✓ Redirects authenticated users to landing page
