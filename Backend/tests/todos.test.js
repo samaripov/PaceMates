@@ -19,7 +19,9 @@ describe("Todos routes /todo", () => {
         sessionCookie = signupResponse.headers["set-cookie"];
         expect(sessionCookie).toBeDefined();
     });
-
+    afterAll((done) => {
+        db.run("DELETE FROM users WHERE username = ?", [testUser.username], done);
+    })
     describe("GET /new", () => {
         test("should redirect to login page when not logged in", async () => {
             const response = await request(server)
@@ -47,13 +49,13 @@ describe("Todos routes /todo", () => {
     }
 
     describe("POST /create", () => {
-        const title = `Test‑Todo-${Date.now()}`;
+        const title = "Test‑Todo";
 
         afterEach(async () => {
-            db.run('DELETE FROM todos WHERE title LIKE "Test‑Todo‑%"');
+            db.run('DELETE FROM todos WHERE title LIKE "Test‑Todo"');
         });
 
-        test("should redirect to login when not logged in", async () => {
+        test("should redirect to login when not logged in, new todo DID NOT persist in the DB", async () => {
             const response = await request(server)
                 .post("/todo/create")
                 .send({ title })
@@ -64,14 +66,14 @@ describe("Todos routes /todo", () => {
             const row = await findTodoByTitle(title);
             expect(row).toBeUndefined();
         });
-        test("should redirect to home page when logged in", async () => {
+        test("should redirect to home page when logged in, new todo persisted in the DB", async () => {
             const response = await request(server)
                 .post("/todo/create")
                 .send({ title })
                 .set("Cookie", sessionCookie)
                 .expect("Location", "/")
                 .expect(302);
-            
+
             //Ensure new todo persisted in the DB
             const row = await findTodoByTitle(title);
 
@@ -82,4 +84,51 @@ describe("Todos routes /todo", () => {
         });
     });
 
+    describe("POST /todo/toggle_complete", () => {
+        const title = `Test‑Todo-${Date.now()}`;
+        let todo_id;
+        beforeEach(async () => {
+            const response = await request(server)
+                .post("/todo/create")
+                .send({ title })
+                .set("Cookie", sessionCookie)
+                .expect("Location", "/")
+                .expect(302);
+            const row = await findTodoByTitle(title);
+            todo_id = row.id;
+        });
+        afterEach(async () => {
+            db.run("DELETE FROM todos WHERE id = ?", [todo_id]);
+        });
+        test("should redirect to login when not logged in, todo DID NOT changed to complete", async () => {
+            const response = await request(server)
+                .post("/todo/toggle_complete")
+                .send({ todo_id, completeness_marker: "on" })
+                .expect("Location", "/login")
+                .expect(302);
+
+            //Ensure new todo DID NOT persist in the DB
+            const row = await findTodoByTitle(title);
+            expect(row).toBeDefined();
+            expect(row.title).toBe(title);
+            expect(row.completed).toBe(0);
+            expect(row.owner_id).toBeGreaterThan(0);
+        });
+        test("todo changed to complete", async () => {
+            const response = await request(server)
+                .post("/todo/toggle_complete")
+                .send({ todo_id, completeness_marker: "on" })
+                .set("Cookie", sessionCookie)
+                .expect("Location", "/")
+                .expect(302);
+
+            //Ensure new todo persisted in the DB
+            const row = await findTodoByTitle(title);
+
+            expect(row).toBeDefined();
+            expect(row.title).toBe(title);
+            expect(row.completed).toBe(1);
+            expect(row.owner_id).toBeGreaterThan(0);
+        });
+    });
 });

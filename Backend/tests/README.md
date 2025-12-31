@@ -32,6 +32,10 @@ npm test -- auth.test.js
 - ✓ Persists new todo in the DB if the use is logged in
 - ✓ Does not persist the new todo in the DB when the user is not logged in
 
+### POST /todo/toggle_complete
+- ✓ Persists the complete toggle when logged in
+- ✓ Redirects the user to the login page and the completeness toggle is ignored
+
 ### GET /login
 - ✓ Renders login page for unauthenticated users
 - ✓ Redirects authenticated users to landing page
