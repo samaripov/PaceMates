@@ -130,4 +130,45 @@ describe("Todos routes /todo", () => {
             expect(row.owner_id).toBeGreaterThan(0);
         });
     });
+
+    describe("POST /:id/delete", () => {
+        const title = `Test‑Todo-${Date.now()}`;
+        let todo_id;
+        beforeEach(async () => {
+            const response = await request(server)
+                .post("/todo/create")
+                .send({ title })
+                .set("Cookie", sessionCookie)
+                .expect("Location", "/")
+                .expect(302);
+            const row = await findTodoByTitle(title);
+            todo_id = row.id;
+        });
+        afterEach(async () => {
+            db.run("DELETE FROM todos WHERE id = ?", [todo_id]);
+        });
+        test("should redirect to login when not logged in, todo DID NOT get deleted", async () => {
+            const response = await request(server)
+                .post(`/todo/${todo_id}/delete`)
+                .expect("Location", "/login")
+                .expect(302);
+            //Ensure new todo DID NOT persist in the DB
+            const row = await findTodoByTitle(title);
+            expect(row).toBeDefined();
+            expect(row.title).toBe(title);
+            expect(row.completed).toBe(0);
+            expect(row.owner_id).toBeGreaterThan(0);
+        });
+        test("todo deleted", async () => {
+            const response = await request(server)
+                .post(`/todo/${todo_id}/delete`)
+                .set("Cookie", sessionCookie)
+                .expect("Location", "/")
+                .expect(302);
+
+            //Ensure new todo deleted from the DB
+            const row = await findTodoByTitle(title);
+            expect(row).toBeUndefined();
+        });
+    });
 });

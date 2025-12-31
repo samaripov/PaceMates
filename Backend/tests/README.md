@@ -25,7 +25,7 @@ npm test -- auth.test.js
 - ✓ Redirects authenticated users to index
 
 ### GET /todo/new
-- ✓ Renders the login for unauthenticated users
+- ✓ Redirects the user to the login page for unauthenticated users
 - ✓ Renders the new todo form for authenticated users
 
 ### POST /todo/create
@@ -35,6 +35,10 @@ npm test -- auth.test.js
 ### POST /todo/toggle_complete
 - ✓ Persists the complete toggle when logged in
 - ✓ Redirects the user to the login page and the completeness toggle is ignored
+
+### POST /todo/:id/delete
+- ✓ Redirects the user to the login page for unauthenticated users
+- ✓ Deletes the todo if the user is logged in
 
 ### GET /login
 - ✓ Renders login page for unauthenticated users
