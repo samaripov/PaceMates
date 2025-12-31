@@ -124,7 +124,6 @@ describe("Todos routes /todo", () => {
 
             //Ensure new todo persisted in the DB
             const row = await findTodoByTitle(title);
-
             expect(row).toBeDefined();
             expect(row.title).toBe(title);
             expect(row.completed).toBe(1);
